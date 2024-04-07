@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from .generate_image import get_image
+from generate_image import get_image
 app = Flask(__name__)
 
 @app.get("/")
@@ -8,7 +8,7 @@ async def root():
 
 
 @app.route('/get_image', methods=['POST'])
-def process_request():
+async def process_request():
     # 받은 요청의 데이터를 확인
     request_data = request.json
     prompt = request_data.get('prompt')
