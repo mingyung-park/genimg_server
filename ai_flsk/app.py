@@ -1,5 +1,8 @@
 from flask import Flask, request, jsonify
 from generate_image import get_image
+import base64
+import io
+
 
 app = Flask(__name__)
 
@@ -14,7 +17,6 @@ def internal_error(error):
 @app.get("/")
 async def root():
     return { "message" : "This is Flask" }
-
 @app.route('/get_image', methods=['POST'])
 async def process_request():
     try:
@@ -22,11 +24,14 @@ async def process_request():
         request_data = request.json
         prompt = request_data.get('prompt')
         image = get_image(prompt)
-        return jsonify({'image': image}), 200
+        buffered = io.BytesIO()
+        image.save(buffered, format="JPEG")
+        encoded_image = base64.b64encode(buffered.getvalue()).decode("utf-8")
+        return jsonify({'image': encoded_image}), 200
     except Exception as e:
         # 예외 발생 시 처리
+        print("Exception occurred in process_request:", e)
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    #app.run(host='0.0.0.0', port=5000)
+    app.run(host='127.0.0.1', port=5000, debug=True)
