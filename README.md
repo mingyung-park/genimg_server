@@ -1,6 +1,10 @@
 # Threepark_ai
 
-install
+## install
+
+file : install_packages.sh
+
+detail:
 
 
     pip install flask
