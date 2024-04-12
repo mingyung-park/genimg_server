@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from generate_image import get_image
+from generate_comment import *
 from sentiment_music import *
 from bucket import S3_ACESS_KEY,S3_SECRET_ACCESS_KEY,S3_BUCKET_NAME,AWS_S3_REGION_NAME
 import boto3
@@ -35,10 +36,22 @@ async def process_image_request():
         buffered = io.BytesIO()
         image.save(buffered, format="JPEG")
         buffered.seek(0)
-        s3.upload_fileobj(buffered, Bucket=S3_BUCKET_NAME, Key=f'images/{image_key}', ExtraArgs={'ContentType':'image/jpeg'})
-        image_url = f'https://{S3_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/{image_key}'
+        s3.upload_fileobj(buffered, Bucket=S3_BUCKET_NAME, Key=f'images/{image_key}.jpg', ExtraArgs={'ContentType':'image/jpeg'})
+        image_url = f'https://{S3_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/{image_key}.jpg'
         buffered.close()
         return jsonify({'image_url': image_url}), 200
+    except Exception as e:
+        print("Exception occurred in process_request:", e)
+        return jsonify({"error": str(e)}), 500
+        
+@app.route('/get_comment', methods=['POST'])
+async def process_comment_request():
+    try:
+        request_data = request.json
+        content = request_data.get('content')
+        comment = get_comment(content)
+        
+        return jsonify({'comment': comment}), 200
     except Exception as e:
         print("Exception occurred in process_request:", e)
         return jsonify({"error": str(e)}), 500
