@@ -27,3 +27,24 @@ pip install Jinja2
 
 # peft 설치
 pip install 'peft==0.7.0'
+
+# boto3 설치
+pip install boto3
+
+# 보안 라이브러리
+pip install werkzeug
+
+# dotenv로 환경변수 관리
+pip install python-dotenv
+
+# async
+pip install Flask[async]
+
+# kobert
+pip install gluonnlp pandas tqdm
+pip install 'numpy==1.23.1'
+pip install 'mxnet==1.9.1'
+pip install sentencepiece
+pip install torch
+pip install 'git+https://github.com/SKTBrain/KoBERT.git#egg=kobert_tokenizer&subdirectory=kobert_hf'
+pip install -U scikit-learn
