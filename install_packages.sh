@@ -47,8 +47,4 @@ pip install 'mxnet==1.9.1'
 pip install sentencepiece
 pip install torch
 pip install 'git+https://github.com/SKTBrain/KoBERT.git#egg=kobert_tokenizer&subdirectory=kobert_hf'
-<<<<<<< HEAD
 pip install -U scikit-learn
-=======
-pip install -U scikit-learn
->>>>>>> dev

@@ -1,4 +1,3 @@
-
 import torch
 import numpy as np
 import pandas as pd
@@ -35,7 +34,7 @@ class BERTDataset(Dataset):
 
     def __len__(self):
         return (len(self.labels))
-
+    
 class BERTClassifier(nn.Module):
     def __init__(self,
                  bert,
@@ -50,7 +49,7 @@ class BERTClassifier(nn.Module):
             nn.Dropout(p=0.2),
             nn.Linear(in_features=hidden_size, out_features=512),
             nn.Linear(in_features=512, out_features=num_classes)
-        )
+        ) 
         self.layer_norm = nn.LayerNorm(768)
         self.dropout = nn.Dropout(p=dr_rate)
 
@@ -61,31 +60,28 @@ class BERTClassifier(nn.Module):
         return attention_mask.float()
 
     def forward(self, token_ids, valid_length, segment_ids):
-        attention_mask = self.gen_attention_mask(token_ids, valid_length)
+        attention_mask = self.gen_attention_mask(token_ids, valid_length) 
 
         _, pooler = self.bert(input_ids = token_ids, token_type_ids = segment_ids.long(), attention_mask = attention_mask.float().to(token_ids.device)) #BERT 모델에 입력을 전달하여 출력을 계산
 
         pooled_output = self.dropout(pooler)
-        normalized_output = self.layer_norm(pooled_output)
+        normalized_output = self.layer_norm(pooled_output) 
         out=self.classifier(normalized_output)
 
         return out
 
-model_path = './CustomKoBERTWithLayNorm_epoch20_F1.pth'
-tokenizer = KoBERTTokenizer.from_pretrained('skt/kobert-base-v1')
-print('bert')
-bertmodel = BertModel.from_pretrained('skt/kobert-base-v1', return_dict=False)
+def inference(sentence, model_path = 'CustomKoBERTWithLayNorm_epoch20_F1.pth'):
+    tokenizer = KoBERTTokenizer.from_pretrained('skt/kobert-base-v1') 
+    bertmodel = BertModel.from_pretrained('skt/kobert-base-v1', return_dict=False)
+    vocab = nlp.vocab.BERTVocab.from_sentencepiece(tokenizer.vocab_file, padding_token='[PAD]') 
+    tok = tokenizer.tokenize
+    model = BERTClassifier(bertmodel, dr_rate=0.5)
+    model=torch.load(model_path)
+    model.eval()
 
-vocab = nlp.vocab.BERTVocab.from_sentencepiece(tokenizer.vocab_file, padding_token='[PAD]')
-tok = tokenizer.tokenize
-model = torch.load(model_path)
-model = BERTClassifier(bertmodel,  dr_rate=0.5)
-model.eval()
+    token = nlp.data.BERTSPTokenizer(tokenizer, vocab, lower=False)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-token = nlp.data.BERTSPTokenizer(tokenizer, vocab, lower=False)
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print(device)
-def inference(sentence):
     dataset = [[sentence, '0']]
     test = BERTDataset(dataset, 0, 1, tok, vocab, max_len, True, False)
     test_dataloader = torch.utils.data.DataLoader(test, batch_size=batch_size, num_workers=2)
@@ -102,7 +98,7 @@ def inference(sentence):
     return output
 
 emotion_arr=['불안','분노','슬픔','당황','기쁨']
-csv_file_path = 'music_emotion.csv'
+csv_file_path = '/content/drive/MyDrive/music_emotion.csv'
 final_emotion = pd.read_csv(csv_file_path)
 
 def get_emotion_label(content):
@@ -125,7 +121,7 @@ def get_music(content):
 
     # 코사인 유사도 계산
     cosine_sim = cosine_similarity(user_tfidf_matrix, music_tfidf_matrix)
-
+    
     # 가장 유사한 음악 선택
     most_similar_song_index = cosine_sim.argmax()
     most_similar_song_info = final_emotion.iloc[most_similar_song_index]
