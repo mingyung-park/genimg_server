@@ -98,7 +98,7 @@ def inference(sentence, model_path = 'CustomKoBERTWithLayNorm_epoch20_F1.pth'):
     return output
 
 emotion_arr=['불안','분노','슬픔','당황','기쁨']
-csv_file_path = '/content/drive/MyDrive/music_emotion.csv'
+csv_file_path = 'music_emotion.csv'
 final_emotion = pd.read_csv(csv_file_path)
 
 def get_emotion_label(content):

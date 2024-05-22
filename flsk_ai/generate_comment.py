@@ -4,7 +4,7 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 import torch
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 
-gpt_model = GPT2LMHeadModel.from_pretrained('Eunju2834/aicomment_kogpt2')
+model = GPT2LMHeadModel.from_pretrained('Eunju2834/aicomment_kogpt2')
 tokenizer = PreTrainedTokenizerFast.from_pretrained('Eunju2834/aicomment_kogpt2')
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -24,7 +24,7 @@ def get_comment(input_text): #koGPT2 모델을 활용하여 입력된 질문에 
     while True:
         input_ids = torch.LongTensor(tokenizer.encode(U_TKN + q + SENT + sent + S_TKN + a)).unsqueeze(dim=0)
         input_ids = input_ids.to(device)
-        pred = gpt_model(input_ids)
+        pred = model(input_ids)
         pred = pred.logits
         gen = tokenizer.convert_ids_to_tokens(torch.argmax(pred, dim=-1).squeeze().tolist())[-1]
         if gen == EOS:
