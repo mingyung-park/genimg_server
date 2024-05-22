@@ -1,4 +1,8 @@
 __pycache__/
 diffusers/
+<<<<<<< HEAD
 .env
 ai_flsk/bucket
+=======
+.env
+>>>>>>> 92f0c4f ([add] gitignore)
