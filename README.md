@@ -1,5 +1,7 @@
 # Threepark_ai
 
+Image Generation & Music recommend & Sentiment classification server 
+
 ## install
 
     chmod +x install_packages.sh
